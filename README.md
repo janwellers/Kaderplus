@@ -25,12 +25,28 @@ Für Entwicklung mit Auto-Reload: `npm run dev`.
 
 ## Formulareingänge
 
-Eingesendete Formulare werden zeilenweise als JSON in `data/submissions.json` gespeichert
-(diese Datei ist per `.gitignore` ausgenommen und wird zur Laufzeit angelegt).
+Eingesendete Formulare werden immer zeilenweise als JSON in `data/submissions.json`
+gespeichert (diese Datei ist per `.gitignore` ausgenommen und wird zur Laufzeit angelegt).
 
-> Hinweis: E-Mail-Versand / Weiterleitung an einen Posteingang ist noch nicht angebunden.
-> Für den Produktivbetrieb kann hier z. B. ein SMTP-Versand (nodemailer) oder ein
-> Formular-Dienst (Formspree, Web3Forms) ergänzt werden.
+### E-Mail-Versand (optional)
+
+Ist SMTP konfiguriert, verschickt der Server zusätzlich:
+
+- eine **Benachrichtigung** an `NOTIFY_EMAIL` (Standard `jan@kaderplus.de`) und
+- eine **Eingangsbestätigung** an die Absender-Adresse.
+
+Konfiguration über Umgebungsvariablen (siehe `.env.example` → nach `.env` kopieren):
+
+```
+SMTP_HOST=smtp.example.com
+SMTP_PORT=587
+SMTP_USER=...
+SMTP_PASS=...
+NOTIFY_EMAIL=jan@kaderplus.de
+```
+
+Ohne SMTP-Konfiguration läuft die Seite normal weiter – Eingänge landen dann nur in
+`data/submissions.json`, es werden keine Mails verschickt.
 
 ## Struktur
 
@@ -40,5 +56,7 @@ public/
   styles.css   Design (Taktiktafel-Look, gold/pitch)
   app.js       Modal-Steuerung + Formular-Absenden (fetch)
 server.js      Express: statische Auslieferung + API-Endpunkte
+mailer.js      Optionaler SMTP-Versand (Benachrichtigung + Bestätigung)
+env.js         Lädt .env (falls vorhanden)
 data/          Laufzeit-Speicher der Formulareingänge
 ```
