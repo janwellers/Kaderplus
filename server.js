@@ -26,14 +26,52 @@ import {
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const PORT = process.env.PORT || 3000;
+const isProd = process.env.NODE_ENV === "production";
 
 const app = express();
+if (isProd) app.set("trust proxy", 1); // hinter Render-Proxy: echte Client-IP nutzen
 app.use(express.json({ limit: "100kb" }));
 app.use(express.urlencoded({ extended: false, limit: "100kb" }));
 
 const isEmail = (v) => typeof v === "string" && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 const clean = (v, max = 2000) =>
   typeof v === "string" ? v.trim().slice(0, max) : "";
+
+// Fängt Fehler aus async-Handlern ab und leitet sie an die Fehler-Middleware
+// (Express 4 tut das nicht von selbst – sonst Absturz durch unhandled rejection).
+const ah = (fn) => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next);
+
+// Einfaches In-Memory-Rate-Limit pro IP (Missbrauchsschutz für öffentliche Endpunkte).
+function rateLimit({ windowMs, max, message }) {
+  const hits = new Map();
+  return (req, res, next) => {
+    const now = Date.now();
+    const key = req.ip || req.socket.remoteAddress || "unknown";
+    const arr = (hits.get(key) || []).filter((t) => now - t < windowMs);
+    if (arr.length >= max) {
+      return res.status(429).json({ ok: false, error: message });
+    }
+    arr.push(now);
+    hits.set(key, arr);
+    if (hits.size > 5000) {
+      for (const [k, v] of hits) {
+        if (!v.some((t) => now - t < windowMs)) hits.delete(k);
+      }
+    }
+    next();
+  };
+}
+
+const formLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  message: "Zu viele Anfragen. Bitte in einigen Minuten erneut versuchen.",
+});
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  message: "Zu viele Anmeldeversuche. Bitte später erneut versuchen.",
+});
 
 // Versendet Benachrichtigung + Bestätigung; Fehler brechen die Anfrage nicht ab.
 async function notify({ subject, fields, confirmTo, confirmName }) {
@@ -58,13 +96,13 @@ function jobFromBody(body) {
 }
 
 // ---------- Öffentliche API: Stellen ----------
-app.get("/api/jobs", async (_req, res) => {
+app.get("/api/jobs", ah(async (_req, res) => {
   const jobs = await listJobs({ includeClosed: false });
   res.json({ ok: true, jobs });
-});
+}));
 
 // ---------- Bewerbung (applicants) ----------
-app.post("/api/apply", async (req, res) => {
+app.post("/api/apply", formLimiter, ah(async (req, res) => {
   const name = clean(req.body.name, 120);
   const email = clean(req.body.email, 160);
   const message = clean(req.body.message, 2000);
@@ -105,10 +143,10 @@ app.post("/api/apply", async (req, res) => {
     ok: true,
     message: "Danke! Deine Bewerbung ist eingegangen – wir melden uns.",
   });
-});
+}));
 
 // ---------- Bedarf melden (clubs) ----------
-app.post("/api/request", async (req, res) => {
+app.post("/api/request", formLimiter, ah(async (req, res) => {
   const club = clean(req.body.club, 160);
   const contact = clean(req.body.contact, 120);
   const email = clean(req.body.email, 160);
@@ -136,14 +174,14 @@ app.post("/api/request", async (req, res) => {
     ok: true,
     message: "Danke! Ihre Anfrage ist eingegangen – wir melden uns innerhalb von 24 Stunden.",
   });
-});
+}));
 
 // ---------- Admin-Authentifizierung ----------
 app.get("/api/admin/session", (req, res) => {
   res.json({ ok: true, authenticated: isAuthed(req), adminEnabled });
 });
 
-app.post("/api/admin/login", (req, res) => {
+app.post("/api/admin/login", loginLimiter, (req, res) => {
   if (!adminEnabled) {
     return res.status(503).json({ ok: false, error: "Admin ist nicht konfiguriert (ADMIN_PASSWORD fehlt)." });
   }
@@ -160,21 +198,21 @@ app.post("/api/admin/logout", (req, res) => {
 });
 
 // ---------- Admin-API: Stellen ----------
-app.get("/api/admin/jobs", requireAdmin, async (_req, res) => {
+app.get("/api/admin/jobs", requireAdmin, ah(async (_req, res) => {
   const jobs = await listJobs({ includeClosed: true });
   res.json({ ok: true, jobs });
-});
+}));
 
-app.post("/api/admin/jobs", requireAdmin, async (req, res) => {
+app.post("/api/admin/jobs", requireAdmin, ah(async (req, res) => {
   const data = jobFromBody(req.body);
   if (!data.title) {
     return res.status(400).json({ ok: false, error: "Titel ist erforderlich." });
   }
   const job = await createJob(data);
   res.status(201).json({ ok: true, job });
-});
+}));
 
-app.put("/api/admin/jobs/:id", requireAdmin, async (req, res) => {
+app.put("/api/admin/jobs/:id", requireAdmin, ah(async (req, res) => {
   const data = jobFromBody(req.body);
   if (!data.title) {
     return res.status(400).json({ ok: false, error: "Titel ist erforderlich." });
@@ -182,18 +220,18 @@ app.put("/api/admin/jobs/:id", requireAdmin, async (req, res) => {
   const job = await updateJob(req.params.id, data);
   if (!job) return res.status(404).json({ ok: false, error: "Stelle nicht gefunden." });
   res.json({ ok: true, job });
-});
+}));
 
-app.delete("/api/admin/jobs/:id", requireAdmin, async (req, res) => {
+app.delete("/api/admin/jobs/:id", requireAdmin, ah(async (req, res) => {
   await deleteJob(req.params.id);
   res.json({ ok: true });
-});
+}));
 
 // ---------- Admin-API: Eingänge ----------
-app.get("/api/admin/submissions", requireAdmin, async (_req, res) => {
+app.get("/api/admin/submissions", requireAdmin, ah(async (_req, res) => {
   const submissions = await listSubmissions();
   res.json({ ok: true, submissions });
-});
+}));
 
 app.get("/api/health", (_req, res) => res.json({ ok: true }));
 
@@ -201,6 +239,18 @@ app.get("/api/health", (_req, res) => res.json({ ok: true }));
 app.get("/admin", (_req, res) => res.sendFile(join(__dirname, "public", "admin.html")));
 
 app.use(express.static(join(__dirname, "public")));
+
+// Zentrale Fehler-Middleware: liefert immer eine Antwort statt den Prozess abzubrechen.
+app.use((err, _req, res, _next) => {
+  console.error("Serverfehler:", err);
+  if (res.headersSent) return;
+  const status = err.status || err.statusCode || 500;
+  const error =
+    status === 400
+      ? "Ungültige Anfrage."
+      : "Interner Serverfehler. Bitte später erneut versuchen.";
+  res.status(status).json({ ok: false, error });
+});
 
 async function start() {
   await initStore();
