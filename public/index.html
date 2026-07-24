@@ -15,7 +15,10 @@
 <header>
   <div class="wrap nav">
     <a class="logo" href="#top">KADER<span>+</span>PLUS</a>
-    <button class="cta-small" type="button" data-open-modal="request">Position melden</button>
+    <nav class="nav-links">
+      <a href="#stellen">Offene Stellen</a>
+      <button class="cta-small" type="button" data-open-modal="request">Position melden</button>
+    </nav>
   </div>
 </header>
 
@@ -107,6 +110,19 @@
             <p>Spielersichtung, Datenscouting und Koordination im Nachwuchsbereich — Profile, die Ihre NLZ-Zertifizierung absichern.</p>
           </div>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="stellen">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="mono">Stellenbörse</span>
+        <h2>Aktuell offene Stellen</h2>
+        <p class="sec-sub">Konkrete Vakanzen aus unserem Netzwerk. Bewirb dich direkt auf eine Stelle — oder weiter unten allgemein für unseren Kandidatenpool.</p>
+      </div>
+      <div id="jobs-list" class="jobs reveal" aria-live="polite">
+        <p class="jobs-empty">Stellen werden geladen …</p>
       </div>
     </div>
   </section>
@@ -327,6 +343,11 @@
     <h3 id="apply-title">In den Pool bewerben</h3>
     <p class="modal-intro">Werden Sie Teil unseres Kandidatenpools. Passende Vereine kommen zu uns — wir bringen Sie zusammen.</p>
     <form id="form-apply" novalidate>
+      <div class="field" id="apply-job-field" hidden>
+        <label for="app-job-title">Ausgewählte Stelle</label>
+        <input id="app-job-title" type="text" readonly>
+        <input type="hidden" id="app-jobid" name="jobId">
+      </div>
       <div class="field">
         <label for="app-name">Name <span class="req">*</span></label>
         <input id="app-name" name="name" type="text" required placeholder="Vor- und Nachname">
@@ -335,7 +356,7 @@
         <label for="app-email">E-Mail <span class="req">*</span></label>
         <input id="app-email" name="email" type="email" required placeholder="name@mail.de">
       </div>
-      <div class="field">
+      <div class="field" id="apply-role-field">
         <label for="app-role">Deine Position <span class="req">*</span></label>
         <select id="app-role" name="role" required>
           <option value="" disabled selected>Bitte wählen …</option>

@@ -10,6 +10,16 @@ services:
     envVars:
       - key: NODE_VERSION
         value: "20.18.1"
+      - key: NODE_ENV
+        value: production
+      # Datenbank für Stellen & Eingänge (Neon/Supabase). Im Render-Dashboard eintragen.
+      - key: DATABASE_URL
+        sync: false
+      # Passwort für den Admin-Bereich (/admin). Im Render-Dashboard eintragen.
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: ADMIN_SECRET
+        generateValue: true
       - key: NOTIFY_EMAIL
         value: jan@kaderplus.de
       - key: MAIL_FROM

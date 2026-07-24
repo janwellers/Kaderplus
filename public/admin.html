@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kaderplus — Admin</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body class="admin-body">
+
+<header>
+  <div class="wrap admin-topbar">
+    <a class="logo" href="/">KADER<span>+</span>PLUS <span class="mono" style="font-family:'IBM Plex Mono',monospace;color:var(--chalk-dim);font-size:.7rem;">/ ADMIN</span></a>
+    <div class="nav-links">
+      <a href="/" target="_blank" rel="noopener">Website ansehen</a>
+      <button id="logout-btn" class="cta-small" type="button" hidden>Abmelden</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap admin-main">
+
+  <!-- Login -->
+  <section id="login-view" hidden>
+    <div class="admin-card admin-login">
+      <h2 style="font-family:'Anton',sans-serif;text-transform:uppercase;margin-bottom:6px;">Admin-Login</h2>
+      <p style="color:var(--chalk-dim);margin-bottom:18px;">Bitte mit dem Admin-Passwort anmelden.</p>
+      <form id="login-form" novalidate>
+        <div class="field">
+          <label for="login-password">Passwort</label>
+          <input id="login-password" name="password" type="password" autocomplete="current-password" required>
+        </div>
+        <p class="form-status" id="login-status" role="status" aria-live="polite"></p>
+        <div class="form-actions">
+          <button class="btn btn-gold" type="submit">Anmelden</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- Dashboard -->
+  <section id="dash-view" hidden>
+    <div class="admin-tabs">
+      <button class="admin-tab active" type="button" data-tab="jobs">Stellen</button>
+      <button class="admin-tab" type="button" data-tab="subs">Eingänge</button>
+    </div>
+
+    <!-- Stellen -->
+    <div id="tab-jobs">
+      <div class="admin-toolbar">
+        <h2 style="font-family:'Anton',sans-serif;text-transform:uppercase;">Stellen verwalten</h2>
+        <button id="new-job-btn" class="btn btn-gold" type="button">＋ Neue Stelle</button>
+      </div>
+
+      <div id="job-editor" class="admin-card" hidden style="margin-bottom:22px;">
+        <h3 id="job-editor-title" style="font-family:'Anton',sans-serif;text-transform:uppercase;margin-bottom:14px;">Neue Stelle</h3>
+        <form id="job-form" novalidate>
+          <input type="hidden" id="job-id">
+          <div class="field">
+            <label for="job-title">Titel der Stelle <span class="req">*</span></label>
+            <input id="job-title" name="title" type="text" required placeholder="z. B. Athletiktrainer (m/w/d) – 1. Mannschaft">
+          </div>
+          <div class="field">
+            <label for="job-category">Bereich</label>
+            <select id="job-category" name="category">
+              <option value="">— Bereich wählen —</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="job-club">Verein / Organisation</label>
+            <input id="job-club" name="club" type="text" placeholder="z. B. SV Musterstadt">
+          </div>
+          <div class="field">
+            <label for="job-location">Ort / Region</label>
+            <input id="job-location" name="location" type="text" placeholder="z. B. Köln">
+          </div>
+          <div class="field">
+            <label for="job-employmentType">Anstellungsart</label>
+            <select id="job-employmentType" name="employmentType">
+              <option value="">— wählen —</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="job-description">Beschreibung</label>
+            <textarea id="job-description" name="description" placeholder="Aufgaben, Anforderungen, Beginn, Umfang …"></textarea>
+          </div>
+          <div class="field">
+            <label for="job-status">Status</label>
+            <select id="job-status" name="status">
+              <option value="open">Offen (öffentlich sichtbar)</option>
+              <option value="closed">Geschlossen (verborgen)</option>
+            </select>
+          </div>
+          <p class="form-status" id="job-status-msg" role="status" aria-live="polite"></p>
+          <div class="job-admin-actions">
+            <button class="btn btn-gold" type="submit" style="width:auto;">Speichern</button>
+            <button class="btn-sm" type="button" id="job-cancel">Abbrechen</button>
+          </div>
+        </form>
+      </div>
+
+      <div id="jobs-admin-list"><p class="admin-hint">Wird geladen …</p></div>
+    </div>
+
+    <!-- Eingänge -->
+    <div id="tab-subs" hidden>
+      <div class="admin-toolbar">
+        <h2 style="font-family:'Anton',sans-serif;text-transform:uppercase;">Eingänge</h2>
+        <button id="refresh-subs" class="btn-sm" type="button">Aktualisieren</button>
+      </div>
+      <div id="subs-list"><p class="admin-hint">Wird geladen …</p></div>
+    </div>
+  </section>
+
+</main>
+
+<script src="/admin.js"></script>
+</body>
+</html>
