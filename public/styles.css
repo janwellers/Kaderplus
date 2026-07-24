@@ -216,6 +216,20 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
 .job .job-apply { margin-top: 18px; align-self: flex-start; }
 .jobs-empty { color: var(--chalk-dim); }
 
+/* Rechtstexte (Impressum / Datenschutz) */
+.legal { padding: 56px 0 80px; }
+.legal h1 { font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: clamp(1.8rem, 5vw, 2.6rem); margin-bottom: 8px; }
+.legal .mono { color: var(--gold); }
+.legal h2 { font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: 1.25rem; margin: 30px 0 10px; }
+.legal h3 { font-weight: 600; margin: 18px 0 6px; }
+.legal p, .legal li { color: var(--chalk-dim); line-height: 1.6; max-width: 70ch; }
+.legal ul { margin: 8px 0 8px 20px; }
+.legal a { color: var(--gold); }
+.legal .placeholder { color: var(--gold); background: rgba(242,194,48,.1); padding: 0 6px; border-radius: 4px; }
+.legal .back { display: inline-block; margin-bottom: 24px; color: var(--chalk-dim); text-decoration: none; }
+.legal .back:hover { color: var(--gold); }
+.legal .updated { color: var(--chalk-dim); font-size: .85rem; margin-top: 32px; }
+
 /* Admin */
 .admin-body { padding: 0; }
 .admin-topbar {
