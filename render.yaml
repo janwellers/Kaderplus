@@ -1,0 +1,35 @@
+services:
+  - type: web
+    name: kaderplus
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: "20.18.1"
+      - key: NODE_ENV
+        value: production
+      # Datenbank für Stellen & Eingänge (Neon/Supabase). Im Render-Dashboard eintragen.
+      - key: DATABASE_URL
+        sync: false
+      # Passwort für den Admin-Bereich (/admin). Im Render-Dashboard eintragen.
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: ADMIN_SECRET
+        generateValue: true
+      - key: NOTIFY_EMAIL
+        value: jan@kaderplus.de
+      - key: MAIL_FROM
+        value: Kaderplus <no-reply@kaderplus.de>
+      # SMTP-Zugangsdaten: im Render-Dashboard eintragen (nicht im Repo speichern)
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        value: "587"
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false

@@ -1,0 +1,19 @@
+{
+  "name": "kaderplus",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Kaderplus – Personalvermittlung für sportliches Funktionspersonal im Fußball. Landingpage mit Bewerbungs- und Vereins-Bedarfsformular.",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "nodemailer": "^6.10.1",
+    "pg": "^8.22.0"
+  }
+}
