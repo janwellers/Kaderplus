@@ -73,14 +73,18 @@ const loginLimiter = rateLimit({
   message: "Zu viele Anmeldeversuche. Bitte später erneut versuchen.",
 });
 
-// Versendet Benachrichtigung + Bestätigung; Fehler brechen die Anfrage nicht ab.
-async function notify({ subject, fields, confirmTo, confirmName }) {
-  try {
-    await sendNotification({ subject, fields, replyTo: confirmTo });
-    await sendConfirmation({ to: confirmTo, name: confirmName });
-  } catch (err) {
-    console.error("E-Mail-Versand fehlgeschlagen:", err.message);
-  }
+// Versendet Benachrichtigung + Bestätigung im Hintergrund. Bewusst nicht
+// awaited: der Versand darf die HTTP-Antwort nicht verzögern (blockierte
+// SMTP-Ports führen sonst zu minutenlang hängenden Formularen).
+function notify({ subject, fields, confirmTo, confirmName }) {
+  Promise.resolve()
+    .then(async () => {
+      await sendNotification({ subject, fields, replyTo: confirmTo });
+      await sendConfirmation({ to: confirmTo, name: confirmName });
+    })
+    .catch((err) => {
+      console.error("E-Mail-Versand fehlgeschlagen:", err.message);
+    });
 }
 
 function jobFromBody(body) {
@@ -127,7 +131,7 @@ app.post("/api/apply", formLimiter, ah(async (req, res) => {
     jobId: job ? job.id : null,
     data: { name, email, role, message, jobTitle: job ? job.title : "" },
   });
-  await notify({
+  notify({
     subject: `Neue Bewerbung: ${role} – ${name}`,
     fields: {
       Name: name,
@@ -164,7 +168,7 @@ app.post("/api/request", formLimiter, ah(async (req, res) => {
     type: "club_request",
     data: { club, contact, email, position, message },
   });
-  await notify({
+  notify({
     subject: `Neue Vereinsanfrage: ${position} – ${club}`,
     fields: { Verein: club, Ansprechpartner: contact, "E-Mail": email, Position: position, Details: message },
     confirmTo: email,
