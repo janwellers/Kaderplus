@@ -19,6 +19,11 @@ if (isConfigured) {
     port: Number(SMTP_PORT),
     secure: SMTP_SECURE === "true" || Number(SMTP_PORT) === 465,
     auth: { user: SMTP_USER, pass: SMTP_PASS },
+    // Ohne Timeouts hängt der Versand minutenlang, wenn der Host SMTP-Ports blockt
+    // (z. B. Render Free-Tier sperrt 25/465/587).
+    connectionTimeout: 10000,
+    greetingTimeout: 10000,
+    socketTimeout: 20000,
   });
 }
 
