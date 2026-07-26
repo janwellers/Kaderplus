@@ -24,11 +24,13 @@ services:
         value: jan@kaderplus.de
       - key: MAIL_FROM
         value: Kaderplus <no-reply@kaderplus.de>
-      # Mailversand über Resend (HTTPS) – funktioniert auch im Free-Tier, in dem
-      # ausgehende SMTP-Ports gesperrt sind. Im Render-Dashboard eintragen.
+      # Mailversand über HTTPS – funktioniert auch im Free-Tier, in dem ausgehende
+      # SMTP-Ports gesperrt sind. Im Render-Dashboard eintragen (Brevo hat Vorrang).
+      - key: BREVO_API_KEY
+        sync: false
       - key: RESEND_API_KEY
         sync: false
-      # Alternative: SMTP-Zugangsdaten (nur genutzt, wenn RESEND_API_KEY leer ist)
+      # Alternative: SMTP-Zugangsdaten (nur genutzt, wenn kein API-Key gesetzt ist)
       - key: SMTP_HOST
         sync: false
       - key: SMTP_PORT

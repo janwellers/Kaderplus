@@ -263,8 +263,8 @@ async function start() {
     console.log(`Speicher: ${storageBackend === "postgres" ? "Postgres (DATABASE_URL)" : "lokale JSON-Dateien (data/)"}`);
     console.log(
       emailConfigured
-        ? `E-Mail-Versand: aktiv (${emailBackend === "resend" ? "Resend HTTP-API" : "SMTP"})`
-        : "E-Mail-Versand: inaktiv – Eingänge werden nur gespeichert. RESEND_API_KEY oder SMTP_* setzen zum Aktivieren."
+        ? `E-Mail-Versand: aktiv (${emailBackend === "smtp" ? "SMTP" : `${emailBackend} HTTP-API`})`
+        : "E-Mail-Versand: inaktiv – Eingänge werden nur gespeichert. BREVO_API_KEY, RESEND_API_KEY oder SMTP_* setzen zum Aktivieren."
     );
     if (!adminEnabled) {
       console.log("Admin: DEAKTIVIERT – ADMIN_PASSWORD setzen, um /admin zu nutzen.");
