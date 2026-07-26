@@ -47,18 +47,28 @@ Ist der Mailversand konfiguriert, verschickt der Server zusätzlich:
 - eine **Benachrichtigung** an `NOTIFY_EMAIL` (Standard `jan@kaderplus.de`) und
 - eine **Eingangsbestätigung** an die Absender-Adresse.
 
-Es gibt zwei Wege (siehe `.env.example` → nach `.env` kopieren):
+Es gibt drei Wege (siehe `.env.example` → nach `.env` kopieren); es gilt die
+Reihenfolge Brevo → Resend → SMTP:
 
-**Resend (empfohlen, HTTPS)** – nötig auf Hostern, die ausgehende SMTP-Ports sperren
-(Render Free-Tier blockt 25/465/587). Domain in Resend verifizieren, Key erzeugen:
+**Brevo (empfohlen, HTTPS)** – nötig auf Hostern, die ausgehende SMTP-Ports sperren
+(Render Free-Tier blockt 25/465/587). Domain in Brevo verifizieren (nur TXT-Einträge,
+kein MX nötig – wichtig bei DNS-Anbietern wie Strato, die MX nur für die Hauptdomain
+können), dann Key erzeugen:
 
 ```
-RESEND_API_KEY=re_...
+BREVO_API_KEY=xkeysib-...
 MAIL_FROM=Kaderplus <info@kaderplus.de>   # Adresse der verifizierten Domain
 NOTIFY_EMAIL=j.wellers@kaderplus.de
 ```
 
-**SMTP (Fallback)** – wird nur genutzt, wenn `RESEND_API_KEY` leer ist:
+**Resend (Alternative, HTTPS)** – gleicher Ablauf, verlangt aber zusätzlich einen
+MX-Eintrag auf der Subdomain `send`:
+
+```
+RESEND_API_KEY=re_...
+```
+
+**SMTP (Fallback)** – wird nur genutzt, wenn kein API-Key gesetzt ist:
 
 ```
 SMTP_HOST=smtp.strato.de
@@ -86,7 +96,7 @@ Domain-DNS bei Strato.
 3. Im Render-Dashboard unter *Environment* eintragen (nicht ins Repo committen):
    - `DATABASE_URL` – der Connection-String aus Schritt 1
    - `ADMIN_PASSWORD` – dein Wunsch-Passwort für `/admin`
-   - optional Mailversand: `RESEND_API_KEY` (empfohlen) oder `SMTP_HOST`/`SMTP_USER`/`SMTP_PASS`
+   - optional Mailversand: `BREVO_API_KEY` (empfohlen), `RESEND_API_KEY` oder `SMTP_HOST`/`SMTP_USER`/`SMTP_PASS`
 4. Nach dem Deploy ist die Seite unter `https://<name>.onrender.com` erreichbar,
    der Admin unter `https://<name>.onrender.com/admin`.
 5. Eigene Domain: in Render *Settings → Custom Domains* die Domain hinzufügen und
@@ -109,7 +119,7 @@ public/
 server.js      Express: Auslieferung + öffentliche & Admin-API-Endpunkte
 store.js       Persistenz (Postgres via DATABASE_URL, sonst JSON-Dateien)
 auth.js        Passwort-Login für /admin (signiertes Cookie)
-mailer.js      Optionaler Mailversand via Resend-API oder SMTP (Benachrichtigung + Bestätigung)
+mailer.js      Optionaler Mailversand via Brevo-/Resend-API oder SMTP (Benachrichtigung + Bestätigung)
 env.js         Lädt .env (falls vorhanden)
 data/          Laufzeit-Speicher (nur ohne DATABASE_URL)
 ```

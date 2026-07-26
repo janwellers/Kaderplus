@@ -1,6 +1,7 @@
 import nodemailer from "nodemailer";
 
 const {
+  BREVO_API_KEY,
   RESEND_API_KEY,
   SMTP_HOST,
   SMTP_PORT = "587",
@@ -11,13 +12,16 @@ const {
   NOTIFY_EMAIL = "jan@kaderplus.de",
 } = process.env;
 
-// Resend versendet über HTTPS und funktioniert daher auch dort, wo ausgehende
-// SMTP-Ports gesperrt sind (z. B. Render Free-Tier). SMTP bleibt als Fallback.
-const useResend = Boolean(RESEND_API_KEY);
+// Brevo und Resend versenden über HTTPS und funktionieren daher auch dort, wo
+// ausgehende SMTP-Ports gesperrt sind (z. B. Render Free-Tier). Reihenfolge:
+// Brevo → Resend → SMTP.
+const useBrevo = Boolean(BREVO_API_KEY);
+const useResend = !useBrevo && Boolean(RESEND_API_KEY);
 const smtpConfigured = Boolean(SMTP_HOST && SMTP_USER && SMTP_PASS);
+const useSmtp = !useBrevo && !useResend && smtpConfigured;
 
 let transporter = null;
-if (!useResend && smtpConfigured) {
+if (useSmtp) {
   transporter = nodemailer.createTransport({
     host: SMTP_HOST,
     port: Number(SMTP_PORT),
@@ -33,9 +37,47 @@ if (!useResend && smtpConfigured) {
 
 const from = MAIL_FROM || `Kaderplus <${SMTP_USER || "no-reply@kaderplus.de"}>`;
 
-export const emailConfigured = useResend || smtpConfigured;
-export const emailBackend = useResend ? "resend" : smtpConfigured ? "smtp" : "none";
+// "Kaderplus <info@kaderplus.de>" → { name, email } (Brevo will beide getrennt)
+function parseFrom(value) {
+  const match = value.match(/^\s*(.*?)\s*<([^>]+)>\s*$/);
+  return match
+    ? { name: match[1] || "Kaderplus", email: match[2] }
+    : { name: "Kaderplus", email: value.trim() };
+}
+const sender = parseFrom(from);
+
+export const emailConfigured = useBrevo || useResend || useSmtp;
+export const emailBackend = useBrevo
+  ? "brevo"
+  : useResend
+    ? "resend"
+    : useSmtp
+      ? "smtp"
+      : "none";
 export const notifyAddress = NOTIFY_EMAIL;
+
+async function sendViaBrevo({ to, subject, text, replyTo }) {
+  const res = await fetch("https://api.brevo.com/v3/smtp/email", {
+    method: "POST",
+    headers: {
+      "api-key": BREVO_API_KEY,
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+    body: JSON.stringify({
+      sender,
+      to: [{ email: to }],
+      subject,
+      textContent: text,
+      ...(replyTo ? { replyTo: { email: replyTo } } : {}),
+    }),
+    signal: AbortSignal.timeout(15000),
+  });
+  if (!res.ok) {
+    const detail = await res.text();
+    throw new Error(`Brevo ${res.status}: ${detail.slice(0, 300)}`);
+  }
+}
 
 async function sendViaResend({ to, subject, text, replyTo }) {
   const res = await fetch("https://api.resend.com/emails", {
@@ -60,6 +102,10 @@ async function sendViaResend({ to, subject, text, replyTo }) {
 }
 
 async function send({ to, subject, text, replyTo }) {
+  if (useBrevo) {
+    await sendViaBrevo({ to, subject, text, replyTo });
+    return { skipped: false };
+  }
   if (useResend) {
     await sendViaResend({ to, subject, text, replyTo });
     return { skipped: false };
