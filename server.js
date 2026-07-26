@@ -2,7 +2,7 @@ import "./env.js";
 import express from "express";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
-import { sendNotification, sendConfirmation, emailConfigured } from "./mailer.js";
+import { sendNotification, sendConfirmation, emailConfigured, emailBackend } from "./mailer.js";
 import {
   initStore,
   storageBackend,
@@ -263,8 +263,8 @@ async function start() {
     console.log(`Speicher: ${storageBackend === "postgres" ? "Postgres (DATABASE_URL)" : "lokale JSON-Dateien (data/)"}`);
     console.log(
       emailConfigured
-        ? "E-Mail-Versand: aktiv (SMTP konfiguriert)"
-        : "E-Mail-Versand: inaktiv – Eingänge werden nur gespeichert. SMTP_* setzen zum Aktivieren."
+        ? `E-Mail-Versand: aktiv (${emailBackend === "resend" ? "Resend HTTP-API" : "SMTP"})`
+        : "E-Mail-Versand: inaktiv – Eingänge werden nur gespeichert. RESEND_API_KEY oder SMTP_* setzen zum Aktivieren."
     );
     if (!adminEnabled) {
       console.log("Admin: DEAKTIVIERT – ADMIN_PASSWORD setzen, um /admin zu nutzen.");

@@ -1,6 +1,7 @@
 import nodemailer from "nodemailer";
 
 const {
+  RESEND_API_KEY,
   SMTP_HOST,
   SMTP_PORT = "587",
   SMTP_USER,
@@ -10,10 +11,13 @@ const {
   NOTIFY_EMAIL = "jan@kaderplus.de",
 } = process.env;
 
-const isConfigured = Boolean(SMTP_HOST && SMTP_USER && SMTP_PASS);
+// Resend versendet über HTTPS und funktioniert daher auch dort, wo ausgehende
+// SMTP-Ports gesperrt sind (z. B. Render Free-Tier). SMTP bleibt als Fallback.
+const useResend = Boolean(RESEND_API_KEY);
+const smtpConfigured = Boolean(SMTP_HOST && SMTP_USER && SMTP_PASS);
 
 let transporter = null;
-if (isConfigured) {
+if (!useResend && smtpConfigured) {
   transporter = nodemailer.createTransport({
     host: SMTP_HOST,
     port: Number(SMTP_PORT),
@@ -29,10 +33,37 @@ if (isConfigured) {
 
 const from = MAIL_FROM || `Kaderplus <${SMTP_USER || "no-reply@kaderplus.de"}>`;
 
-export const emailConfigured = isConfigured;
+export const emailConfigured = useResend || smtpConfigured;
+export const emailBackend = useResend ? "resend" : smtpConfigured ? "smtp" : "none";
 export const notifyAddress = NOTIFY_EMAIL;
 
+async function sendViaResend({ to, subject, text, replyTo }) {
+  const res = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${RESEND_API_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      from,
+      to: [to],
+      subject,
+      text,
+      ...(replyTo ? { reply_to: replyTo } : {}),
+    }),
+    signal: AbortSignal.timeout(15000),
+  });
+  if (!res.ok) {
+    const detail = await res.text();
+    throw new Error(`Resend ${res.status}: ${detail.slice(0, 300)}`);
+  }
+}
+
 async function send({ to, subject, text, replyTo }) {
+  if (useResend) {
+    await sendViaResend({ to, subject, text, replyTo });
+    return { skipped: false };
+  }
   if (!transporter) return { skipped: true };
   await transporter.sendMail({ from, to, subject, text, replyTo });
   return { skipped: false };
