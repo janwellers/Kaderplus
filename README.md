@@ -42,23 +42,35 @@ gespeichert (diese Datei ist per `.gitignore` ausgenommen und wird zur Laufzeit 
 
 ### E-Mail-Versand (optional)
 
-Ist SMTP konfiguriert, verschickt der Server zusätzlich:
+Ist der Mailversand konfiguriert, verschickt der Server zusätzlich:
 
 - eine **Benachrichtigung** an `NOTIFY_EMAIL` (Standard `jan@kaderplus.de`) und
 - eine **Eingangsbestätigung** an die Absender-Adresse.
 
-Konfiguration über Umgebungsvariablen (siehe `.env.example` → nach `.env` kopieren):
+Es gibt zwei Wege (siehe `.env.example` → nach `.env` kopieren):
+
+**Resend (empfohlen, HTTPS)** – nötig auf Hostern, die ausgehende SMTP-Ports sperren
+(Render Free-Tier blockt 25/465/587). Domain in Resend verifizieren, Key erzeugen:
 
 ```
-SMTP_HOST=smtp.example.com
+RESEND_API_KEY=re_...
+MAIL_FROM=Kaderplus <info@kaderplus.de>   # Adresse der verifizierten Domain
+NOTIFY_EMAIL=j.wellers@kaderplus.de
+```
+
+**SMTP (Fallback)** – wird nur genutzt, wenn `RESEND_API_KEY` leer ist:
+
+```
+SMTP_HOST=smtp.strato.de
 SMTP_PORT=587
 SMTP_USER=...
 SMTP_PASS=...
 NOTIFY_EMAIL=jan@kaderplus.de
 ```
 
-Ohne SMTP-Konfiguration läuft die Seite normal weiter – Eingänge landen dann nur in
-`data/submissions.json`, es werden keine Mails verschickt.
+Ohne beides läuft die Seite normal weiter – Eingänge werden weiterhin gespeichert und
+sind unter `/admin` sichtbar, es werden nur keine Mails verschickt. Der Versand läuft
+immer im Hintergrund und verzögert die Formularantwort nicht.
 
 ## Deployment (Render + Domain bei Strato)
 
@@ -74,7 +86,7 @@ Domain-DNS bei Strato.
 3. Im Render-Dashboard unter *Environment* eintragen (nicht ins Repo committen):
    - `DATABASE_URL` – der Connection-String aus Schritt 1
    - `ADMIN_PASSWORD` – dein Wunsch-Passwort für `/admin`
-   - optional SMTP: `SMTP_HOST`, `SMTP_USER`, `SMTP_PASS`
+   - optional Mailversand: `RESEND_API_KEY` (empfohlen) oder `SMTP_HOST`/`SMTP_USER`/`SMTP_PASS`
 4. Nach dem Deploy ist die Seite unter `https://<name>.onrender.com` erreichbar,
    der Admin unter `https://<name>.onrender.com/admin`.
 5. Eigene Domain: in Render *Settings → Custom Domains* die Domain hinzufügen und
@@ -97,7 +109,7 @@ public/
 server.js      Express: Auslieferung + öffentliche & Admin-API-Endpunkte
 store.js       Persistenz (Postgres via DATABASE_URL, sonst JSON-Dateien)
 auth.js        Passwort-Login für /admin (signiertes Cookie)
-mailer.js      Optionaler SMTP-Versand (Benachrichtigung + Bestätigung)
+mailer.js      Optionaler Mailversand via Resend-API oder SMTP (Benachrichtigung + Bestätigung)
 env.js         Lädt .env (falls vorhanden)
 data/          Laufzeit-Speicher (nur ohne DATABASE_URL)
 ```

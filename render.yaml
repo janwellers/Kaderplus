@@ -24,7 +24,11 @@ services:
         value: jan@kaderplus.de
       - key: MAIL_FROM
         value: Kaderplus <no-reply@kaderplus.de>
-      # SMTP-Zugangsdaten: im Render-Dashboard eintragen (nicht im Repo speichern)
+      # Mailversand über Resend (HTTPS) – funktioniert auch im Free-Tier, in dem
+      # ausgehende SMTP-Ports gesperrt sind. Im Render-Dashboard eintragen.
+      - key: RESEND_API_KEY
+        sync: false
+      # Alternative: SMTP-Zugangsdaten (nur genutzt, wenn RESEND_API_KEY leer ist)
       - key: SMTP_HOST
         sync: false
       - key: SMTP_PORT
