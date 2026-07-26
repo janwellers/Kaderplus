@@ -237,7 +237,11 @@ app.get("/api/admin/submissions", requireAdmin, ah(async (_req, res) => {
   res.json({ ok: true, submissions });
 }));
 
-app.get("/api/health", (_req, res) => res.json({ ok: true }));
+// mail/storage nennen nur das aktive Backend (keine Keys), damit sich eine
+// Fehlkonfiguration in Produktion ohne Log-Zugriff erkennen lässt.
+app.get("/api/health", (_req, res) =>
+  res.json({ ok: true, mail: emailBackend, storage: storageBackend })
+);
 
 // Admin-Seite (statische Dateien danach als Fallback)
 app.get("/admin", (_req, res) => res.sendFile(join(__dirname, "public", "admin.html")));
