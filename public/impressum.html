@@ -16,7 +16,7 @@
   <div class="wrap nav">
     <a class="logo" href="/">KADER<span>+</span>PLUS</a>
     <nav class="nav-links">
-      <a href="/#stellen">Offene Stellen</a>
+      <a href="/#stellen" data-cms="nav.jobs">Offene Stellen</a>
     </nav>
   </div>
 </header>
@@ -30,27 +30,27 @@
 
     <h2>Angaben gemäß § 5 DDG</h2>
     <p>
-      <span class="placeholder">[Vollständiger Name]</span><br>
-      <span class="placeholder">[Straße und Hausnummer]</span><br>
-      <span class="placeholder">[PLZ Ort]</span><br>
+      <span class="placeholder" data-cms="impressum.name">[Vollständiger Name]</span><br>
+      <span class="placeholder" data-cms="impressum.street">[Straße und Hausnummer]</span><br>
+      <span class="placeholder" data-cms="impressum.city">[PLZ Ort]</span><br>
       Deutschland
     </p>
 
     <h2>Kontakt</h2>
     <p>
-      E-Mail: <span class="placeholder">[E-Mail-Adresse]</span><br>
-      Telefon: <span class="placeholder">[Telefonnummer, optional]</span>
+      E-Mail: <span class="placeholder" data-cms="impressum.email">[E-Mail-Adresse]</span><br>
+      Telefon: <span class="placeholder" data-cms="impressum.phone">[Telefonnummer, optional]</span>
     </p>
 
     <h2>Umsatzsteuer-ID</h2>
     <p>
       Umsatzsteuer-Identifikationsnummer gemäß § 27a Umsatzsteuergesetz:<br>
-      <span class="placeholder">[USt-IdNr., falls vorhanden — sonst diesen Abschnitt entfernen]</span>
+      <span class="placeholder" data-cms="impressum.vat">[USt-IdNr., falls vorhanden — sonst diesen Abschnitt entfernen]</span>
     </p>
 
     <h2>Verantwortlich für den Inhalt</h2>
     <p>
-      <span class="placeholder">[Vollständiger Name]</span>, Anschrift wie oben.
+      <span class="placeholder" data-cms="impressum.name">[Vollständiger Name]</span>, Anschrift wie oben.
     </p>
 
     <h2>Haftung für Inhalte</h2>
@@ -77,7 +77,7 @@
       gekennzeichnet.
     </p>
 
-    <p class="updated">
+    <p class="updated" data-placeholder-note>
       Hinweis: Die mit <span class="placeholder">[…]</span> markierten Felder müssen
       noch durch die tatsächlichen Angaben ersetzt werden.
     </p>
@@ -87,10 +87,11 @@
 
 <footer>
   <div class="wrap">
-    <span>© 2026 Kaderplus · Vermittlung von sportlichem Funktionspersonal</span>
+    <span data-cms="footer.text">© 2026 Kaderplus · Vermittlung von sportlichem Funktionspersonal</span>
     <span><a href="/impressum.html">Impressum</a> · <a href="/datenschutz.html">Datenschutz</a></span>
   </div>
 </footer>
 
+<script src="/site-content.js"></script>
 </body>
 </html>

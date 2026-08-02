@@ -16,8 +16,8 @@
   <div class="wrap nav">
     <a class="logo" href="#top">KADER<span>+</span>PLUS</a>
     <nav class="nav-links">
-      <a href="#stellen">Offene Stellen</a>
-      <button class="cta-small" type="button" data-open-modal="request">Position melden</button>
+      <a href="#stellen" data-cms="nav.jobs">Offene Stellen</a>
+      <button class="cta-small" type="button" data-open-modal="request" data-cms="nav.cta">Position melden</button>
     </nav>
   </div>
 </header>
@@ -25,12 +25,12 @@
 <main id="top">
 
   <div class="hero wrap">
-    <p class="mono">Personalvermittlung · Fußball · Funktionsteam</p>
-    <h1>Das Team <em>hinter</em> dem Team.</h1>
-    <p>Kaderplus vermittelt sportliches Funktionspersonal: Athletiktrainer, Videoanalysten, Physiotherapeuten und Scouts — für Nachwuchsleistungszentren und Vereine, die sich professionalisieren.</p>
+    <p class="mono" data-cms="hero.kicker">Personalvermittlung · Fußball · Funktionsteam</p>
+    <h1 data-cms="hero.title">Das Team <em>hinter</em> dem Team.</h1>
+    <p data-cms="hero.text">Kaderplus vermittelt sportliches Funktionspersonal: Athletiktrainer, Videoanalysten, Physiotherapeuten und Scouts — für Nachwuchsleistungszentren und Vereine, die sich professionalisieren.</p>
     <div class="cta-row">
-      <button class="btn btn-gold" type="button" data-open-modal="request">Offene Position melden</button>
-      <button class="btn btn-ghost" type="button" data-open-modal="apply">Als Kandidat:in bewerben</button>
+      <button class="btn btn-gold" type="button" data-open-modal="request" data-cms="hero.ctaPrimary">Offene Position melden</button>
+      <button class="btn btn-ghost" type="button" data-open-modal="apply" data-cms="hero.ctaSecondary">Als Kandidat:in bewerben</button>
     </div>
   </div>
 
@@ -71,43 +71,43 @@
         </g>
       </g>
     </svg>
-    <figcaption>Elf Spieler gewinnen kein Spiel allein. Wir besetzen die Positionen an der Seitenlinie.</figcaption>
+    <figcaption data-cms="board.caption">Elf Spieler gewinnen kein Spiel allein. Wir besetzen die Positionen an der Seitenlinie.</figcaption>
   </figure>
 
   <section id="kader">
     <div class="wrap">
       <div class="sec-head reveal">
-        <span class="mono">Aufstellung</span>
-        <h2>Diese Positionen besetzen wir</h2>
-        <p class="sec-sub">Vom sportlichen Kernteam bis in Verwaltung, Vertrieb und Medien — wir vermitteln alle Funktionsstellen im Verein außerhalb von Spielern und Trainern.</p>
+        <span class="mono" data-cms="positions.kicker">Aufstellung</span>
+        <h2 data-cms="positions.heading">Diese Positionen besetzen wir</h2>
+        <p class="sec-sub" data-cms="positions.sub">Vom sportlichen Kernteam bis in Verwaltung, Vertrieb und Medien — wir vermitteln alle Funktionsstellen im Verein außerhalb von Spielern und Trainern.</p>
       </div>
       <div class="sheet reveal">
         <div class="row">
-          <div class="pos">AT</div>
+          <div class="pos" data-cms="positions.item1.badge">AT</div>
           <div class="role">
-            <h3>Athletiktrainer</h3>
-            <p>Kraft-, Schnelligkeits- und Präventionstraining — vom NLZ bis zur ersten Mannschaft. Sportwissenschaftlich ausgebildet, mit Fußball-Fokus.</p>
+            <h3 data-cms="positions.item1.title">Athletiktrainer</h3>
+            <p data-cms="positions.item1.text">Kraft-, Schnelligkeits- und Präventionstraining — vom NLZ bis zur ersten Mannschaft. Sportwissenschaftlich ausgebildet, mit Fußball-Fokus.</p>
           </div>
         </div>
         <div class="row">
-          <div class="pos">VA</div>
+          <div class="pos" data-cms="positions.item2.badge">VA</div>
           <div class="role">
-            <h3>Videoanalyst</h3>
-            <p>Spiel- und Gegneranalyse, Datenaufbereitung fürs Trainerteam. Zertifizierte Analysten, die moderne Tools beherrschen.</p>
+            <h3 data-cms="positions.item2.title">Videoanalyst</h3>
+            <p data-cms="positions.item2.text">Spiel- und Gegneranalyse, Datenaufbereitung fürs Trainerteam. Zertifizierte Analysten, die moderne Tools beherrschen.</p>
           </div>
         </div>
         <div class="row">
-          <div class="pos">PH</div>
+          <div class="pos" data-cms="positions.item3.badge">PH</div>
           <div class="role">
-            <h3>Physiotherapeut &amp; Reha-Trainer</h3>
-            <p>Behandlung, Belastungssteuerung und Return-to-Play — Physios mit Erfahrung im Mannschaftssport statt Praxisalltag.</p>
+            <h3 data-cms="positions.item3.title">Physiotherapeut &amp; Reha-Trainer</h3>
+            <p data-cms="positions.item3.text">Behandlung, Belastungssteuerung und Return-to-Play — Physios mit Erfahrung im Mannschaftssport statt Praxisalltag.</p>
           </div>
         </div>
         <div class="row">
-          <div class="pos">SC</div>
+          <div class="pos" data-cms="positions.item4.badge">SC</div>
           <div class="role">
-            <h3>Scout &amp; NLZ-Personal</h3>
-            <p>Spielersichtung, Datenscouting und Koordination im Nachwuchsbereich — Profile, die Ihre NLZ-Zertifizierung absichern.</p>
+            <h3 data-cms="positions.item4.title">Scout &amp; NLZ-Personal</h3>
+            <p data-cms="positions.item4.text">Spielersichtung, Datenscouting und Koordination im Nachwuchsbereich — Profile, die Ihre NLZ-Zertifizierung absichern.</p>
           </div>
         </div>
       </div>
@@ -117,9 +117,9 @@
   <section id="stellen">
     <div class="wrap">
       <div class="sec-head reveal">
-        <span class="mono">Stellenbörse</span>
-        <h2>Aktuell offene Stellen</h2>
-        <p class="sec-sub">Konkrete Vakanzen aus unserem Netzwerk. Bewirb dich direkt auf eine Stelle — oder weiter unten allgemein für unseren Kandidatenpool.</p>
+        <span class="mono" data-cms="jobs.kicker">Stellenbörse</span>
+        <h2 data-cms="jobs.heading">Aktuell offene Stellen</h2>
+        <p class="sec-sub" data-cms="jobs.sub">Konkrete Vakanzen aus unserem Netzwerk. Bewirb dich direkt auf eine Stelle — oder weiter unten allgemein für unseren Kandidatenpool.</p>
       </div>
       <div id="jobs-list" class="jobs reveal" aria-live="polite">
         <p class="jobs-empty">Stellen werden geladen …</p>
@@ -130,25 +130,25 @@
   <section>
     <div class="wrap">
       <div class="sec-head reveal">
-        <span class="mono">Zielgruppen</span>
-        <h2>Für wen wir arbeiten</h2>
+        <span class="mono" data-cms="audience.kicker">Zielgruppen</span>
+        <h2 data-cms="audience.heading">Für wen wir arbeiten</h2>
       </div>
       <div class="clubs reveal">
         <div class="club">
-          <span class="mono">NLZ</span>
-          <p>Nachwuchsleistungszentren, die Zertifizierungsauflagen mit qualifiziertem Personal erfüllen müssen.</p>
+          <span class="mono" data-cms="audience.item1.label">NLZ</span>
+          <p data-cms="audience.item1.text">Nachwuchsleistungszentren, die Zertifizierungsauflagen mit qualifiziertem Personal erfüllen müssen.</p>
         </div>
         <div class="club">
-          <span class="mono">2. + 3. Liga</span>
-          <p>Profivereine, die ihr Funktionsteam vergrößern, ohne eine eigene HR-Abteilung zu haben.</p>
+          <span class="mono" data-cms="audience.item2.label">2. + 3. Liga</span>
+          <p data-cms="audience.item2.text">Profivereine, die ihr Funktionsteam vergrößern, ohne eine eigene HR-Abteilung zu haben.</p>
         </div>
         <div class="club">
-          <span class="mono">Regionalliga</span>
-          <p>Ambitionierte Clubs, die sich professionalisieren und den nächsten Schritt gehen wollen.</p>
+          <span class="mono" data-cms="audience.item3.label">Regionalliga</span>
+          <p data-cms="audience.item3.text">Ambitionierte Clubs, die sich professionalisieren und den nächsten Schritt gehen wollen.</p>
         </div>
         <div class="club">
-          <span class="mono">Frauen-Bundesliga</span>
-          <p>Der am schnellsten wachsende Bereich im deutschen Fußball — mit entsprechendem Personalbedarf.</p>
+          <span class="mono" data-cms="audience.item4.label">Frauen-Bundesliga</span>
+          <p data-cms="audience.item4.text">Der am schnellsten wachsende Bereich im deutschen Fußball — mit entsprechendem Personalbedarf.</p>
         </div>
       </div>
     </div>
@@ -157,28 +157,28 @@
   <section>
     <div class="wrap">
       <div class="sec-head reveal">
-        <span class="mono">Spielplan</span>
-        <h2>So läuft die Besetzung</h2>
+        <span class="mono" data-cms="process.kicker">Spielplan</span>
+        <h2 data-cms="process.heading">So läuft die Besetzung</h2>
       </div>
       <div class="steps reveal">
         <div class="step">
           <div class="whistle">1</div>
-          <h3>Anstoß</h3>
-          <p>Sie melden uns die offene Position. Im Erstgespräch klären wir Anforderungsprofil, Budget und Zeitrahmen.</p>
+          <h3 data-cms="process.step1.title">Anstoß</h3>
+          <p data-cms="process.step1.text">Sie melden uns die offene Position. Im Erstgespräch klären wir Anforderungsprofil, Budget und Zeitrahmen.</p>
         </div>
         <div class="step">
           <div class="whistle">2</div>
-          <h3>Aufstellung</h3>
-          <p>Wir stellen Ihnen passende, vorgeprüfte Kandidatenprofile aus unserem Pool vor — in der Regel innerhalb von zwei Wochen.</p>
+          <h3 data-cms="process.step2.title">Aufstellung</h3>
+          <p data-cms="process.step2.text">Wir stellen Ihnen passende, vorgeprüfte Kandidatenprofile aus unserem Pool vor — in der Regel innerhalb von zwei Wochen.</p>
         </div>
         <div class="step">
           <div class="whistle">3</div>
-          <h3>Einwechslung</h3>
-          <p>Sie führen die Gespräche, wir begleiten bis zur Vertragsunterschrift und bleiben auch danach Ansprechpartner.</p>
+          <h3 data-cms="process.step3.title">Einwechslung</h3>
+          <p data-cms="process.step3.text">Sie führen die Gespräche, wir begleiten bis zur Vertragsunterschrift und bleiben auch danach Ansprechpartner.</p>
         </div>
       </div>
       <div class="fairplay reveal">
-        <strong>Fairplay-Prinzip:</strong> Ein Honorar entsteht ausschließlich bei erfolgreicher Besetzung. Kein Vorschuss, keine laufenden Kosten, kein Risiko.
+        <strong data-cms="process.fairplay.title">Fairplay-Prinzip:</strong> <span data-cms="process.fairplay.text">Ein Honorar entsteht ausschließlich bei erfolgreicher Besetzung. Kein Vorschuss, keine laufenden Kosten, kein Risiko.</span>
       </div>
     </div>
   </section>
@@ -186,25 +186,25 @@
   <section class="about">
     <div class="wrap">
       <div class="sec-head reveal">
-        <span class="mono">Trainerbank</span>
-        <h2>Wer hinter Kaderplus steht</h2>
+        <span class="mono" data-cms="about.kicker">Trainerbank</span>
+        <h2 data-cms="about.heading">Wer hinter Kaderplus steht</h2>
       </div>
       <div class="reveal">
-        <p><strong>Jan [Nachname]</strong> verbindet zwei Welten: hauptberufliche Erfahrung in der professionellen Personaldisposition — Akquise, Matching, Koordination — und ein Sportmanagement-Studium an der IU.</p>
-        <p>Kaderplus entstand aus einer einfachen Beobachtung: Vereine professionalisieren ihren sportlichen Bereich schneller, als sie Personal dafür finden. Genau diese Lücke schließen wir — mit dem Handwerk der Personaldienstleistung und dem Netzwerk aus dem Sport.</p>
+        <p data-cms="about.text1"><em>Jan [Nachname]</em> verbindet zwei Welten: hauptberufliche Erfahrung in der professionellen Personaldisposition — Akquise, Matching, Koordination — und ein Sportmanagement-Studium an der IU.</p>
+        <p data-cms="about.text2">Kaderplus entstand aus einer einfachen Beobachtung: Vereine professionalisieren ihren sportlichen Bereich schneller, als sie Personal dafür finden. Genau diese Lücke schließen wir — mit dem Handwerk der Personaldienstleistung und dem Netzwerk aus dem Sport.</p>
       </div>
     </div>
   </section>
 
   <section class="contact" id="kontakt">
     <div class="wrap reveal">
-      <h2>Bereit für den nächsten Schritt?</h2>
-      <p>Melden Sie eine offene Position oder bewerben Sie sich für unseren Kandidatenpool — Antwort innerhalb von 24 Stunden.</p>
+      <h2 data-cms="contact.heading">Bereit für den nächsten Schritt?</h2>
+      <p data-cms="contact.text">Melden Sie eine offene Position oder bewerben Sie sich für unseren Kandidatenpool — Antwort innerhalb von 24 Stunden.</p>
       <div class="cta-row">
-        <button class="btn btn-gold" type="button" data-open-modal="request">Offene Position melden</button>
-        <button class="btn btn-ghost" type="button" data-open-modal="apply">Als Kandidat:in bewerben</button>
+        <button class="btn btn-gold" type="button" data-open-modal="request" data-cms="contact.ctaPrimary">Offene Position melden</button>
+        <button class="btn btn-ghost" type="button" data-open-modal="apply" data-cms="contact.ctaSecondary">Als Kandidat:in bewerben</button>
       </div>
-      <p class="sub">Lieber direkt? <a href="mailto:jan@kaderplus.de">jan@kaderplus.de</a> · Oder auf <a href="https://www.linkedin.com/company/kaderplus" target="_blank" rel="noopener">LinkedIn</a>.</p>
+      <p class="sub"><span data-cms="contact.subPrefix">Lieber direkt?</span> <a href="mailto:jan@kaderplus.de" data-cms="contact.email" data-cms-mail>jan@kaderplus.de</a> · Oder auf <a href="https://www.linkedin.com/company/kaderplus" target="_blank" rel="noopener" data-cms="contact.linkedinLabel" data-cms-href="contact.linkedinUrl">LinkedIn</a>.</p>
     </div>
   </section>
 
@@ -212,7 +212,7 @@
 
 <footer>
   <div class="wrap">
-    <span>© 2026 Kaderplus · Vermittlung von sportlichem Funktionspersonal</span>
+    <span data-cms="footer.text">© 2026 Kaderplus · Vermittlung von sportlichem Funktionspersonal</span>
     <span><a href="/impressum.html">Impressum</a> · <a href="/datenschutz.html">Datenschutz</a></span>
   </div>
 </footer>
@@ -221,11 +221,11 @@
 <div class="modal" id="modal-request" role="dialog" aria-modal="true" aria-labelledby="request-title" hidden>
   <div class="modal-card">
     <div class="modal-head">
-      <span class="mono">Für Vereine</span>
+      <span class="mono" data-cms="request.kicker">Für Vereine</span>
       <button class="modal-close" type="button" data-close-modal aria-label="Schließen">&times;</button>
     </div>
-    <h3 id="request-title">Offene Position melden</h3>
-    <p class="modal-intro">Sagen Sie uns, welche Position Sie besetzen möchten. Wir melden uns innerhalb von 24 Stunden.</p>
+    <h3 id="request-title" data-cms="request.title">Offene Position melden</h3>
+    <p class="modal-intro" data-cms="request.intro">Sagen Sie uns, welche Position Sie besetzen möchten. Wir melden uns innerhalb von 24 Stunden.</p>
     <form id="form-request" novalidate>
       <div class="field">
         <label for="req-club">Verein / Organisation <span class="req">*</span></label>
@@ -337,11 +337,11 @@
 <div class="modal" id="modal-apply" role="dialog" aria-modal="true" aria-labelledby="apply-title" hidden>
   <div class="modal-card">
     <div class="modal-head">
-      <span class="mono">Für Kandidat:innen</span>
+      <span class="mono" data-cms="apply.kicker">Für Kandidat:innen</span>
       <button class="modal-close" type="button" data-close-modal aria-label="Schließen">&times;</button>
     </div>
-    <h3 id="apply-title">In den Pool bewerben</h3>
-    <p class="modal-intro">Werden Sie Teil unseres Kandidatenpools. Passende Vereine kommen zu uns — wir bringen Sie zusammen.</p>
+    <h3 id="apply-title" data-cms="apply.title">In den Pool bewerben</h3>
+    <p class="modal-intro" data-cms="apply.intro">Werden Sie Teil unseres Kandidatenpools. Passende Vereine kommen zu uns — wir bringen Sie zusammen.</p>
     <form id="form-apply" novalidate>
       <div class="field" id="apply-job-field" hidden>
         <label for="app-job-title">Ausgewählte Stelle</label>
@@ -450,6 +450,7 @@
   </div>
 </div>
 
+<script src="/site-content.js"></script>
 <script src="/app.js"></script>
 </body>
 </html>

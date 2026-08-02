@@ -13,7 +13,11 @@ import {
   deleteJob,
   createSubmission,
   listSubmissions,
+  deleteSubmission,
+  getContentOverrides,
+  saveContentOverrides,
 } from "./store.js";
+import { contentGroups, mergeContent, isContentKey, contentDefaults } from "./content.js";
 import {
   adminEnabled,
   adminUsesDevDefault,
@@ -103,6 +107,12 @@ function jobFromBody(body) {
 app.get("/api/jobs", ah(async (_req, res) => {
   const jobs = await listJobs({ includeClosed: false });
   res.json({ ok: true, jobs });
+}));
+
+// ---------- Öffentliche API: Website-Texte ----------
+app.get("/api/content", ah(async (_req, res) => {
+  const content = mergeContent(await getContentOverrides());
+  res.json({ ok: true, content });
 }));
 
 // ---------- Bewerbung (applicants) ----------
@@ -235,6 +245,33 @@ app.delete("/api/admin/jobs/:id", requireAdmin, ah(async (req, res) => {
 app.get("/api/admin/submissions", requireAdmin, ah(async (_req, res) => {
   const submissions = await listSubmissions();
   res.json({ ok: true, submissions });
+}));
+
+app.delete("/api/admin/submissions/:id", requireAdmin, ah(async (req, res) => {
+  await deleteSubmission(req.params.id);
+  res.json({ ok: true });
+}));
+
+// ---------- Admin-API: Website-Texte ----------
+app.get("/api/admin/content", requireAdmin, ah(async (_req, res) => {
+  const content = mergeContent(await getContentOverrides());
+  res.json({ ok: true, groups: contentGroups, content });
+}));
+
+app.put("/api/admin/content", requireAdmin, ah(async (req, res) => {
+  const input = req.body && typeof req.body.content === "object" ? req.body.content : null;
+  if (!input) {
+    return res.status(400).json({ ok: false, error: "Keine Texte übermittelt." });
+  }
+  const patch = {};
+  for (const [key, raw] of Object.entries(input)) {
+    if (!isContentKey(key)) continue;
+    const value = clean(raw, 4000);
+    // Standardtext = keine Abweichung speichern (Feld fällt auf den Standard zurück).
+    patch[key] = value === contentDefaults[key] ? "" : value;
+  }
+  const overrides = await saveContentOverrides(patch);
+  res.json({ ok: true, content: mergeContent(overrides) });
 }));
 
 // mail/storage nennen nur das aktive Backend (keine Keys), damit sich eine

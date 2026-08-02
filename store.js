@@ -1,4 +1,5 @@
-// Persistenzschicht für Stellen (jobs) und Formulareingänge (submissions).
+// Persistenzschicht für Stellen (jobs), Formulareingänge (submissions) und
+// die im Admin gepflegten Website-Texte (content).
 // Nutzt Postgres, wenn DATABASE_URL gesetzt ist – sonst lokale JSON-Dateien (Dev).
 import { readFile, writeFile, mkdir } from "node:fs/promises";
 import { join, dirname } from "node:path";
@@ -9,6 +10,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const DATA_DIR = join(__dirname, "data");
 const JOBS_FILE = join(DATA_DIR, "jobs.json");
 const SUBS_FILE = join(DATA_DIR, "submissions.json");
+const CONTENT_FILE = join(DATA_DIR, "content.json");
 
 const usePg = Boolean(process.env.DATABASE_URL);
 export const storageBackend = usePg ? "postgres" : "file";
@@ -62,6 +64,13 @@ async function initPg() {
       created_at TIMESTAMPTZ NOT NULL DEFAULT now()
     )
   `);
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS content (
+      key TEXT PRIMARY KEY,
+      value TEXT NOT NULL,
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+    )
+  `);
 }
 
 // ---------- File (Dev) ----------
@@ -72,6 +81,15 @@ async function readJson(file, fallback) {
     return Array.isArray(parsed) ? parsed : fallback;
   } catch {
     return fallback;
+  }
+}
+
+async function readJsonObject(file) {
+  try {
+    const parsed = JSON.parse(await readFile(file, "utf8"));
+    return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed : {};
+  } catch {
+    return {};
   }
 }
 
@@ -190,6 +208,49 @@ export async function createSubmission({ type, jobId = null, data }) {
   subs.push(record);
   await writeJson(SUBS_FILE, subs);
   return record;
+}
+
+export async function deleteSubmission(id) {
+  if (usePg) {
+    await pool.query("DELETE FROM submissions WHERE id = $1", [id]);
+    return;
+  }
+  const subs = await readJson(SUBS_FILE, []);
+  await writeJson(SUBS_FILE, subs.filter((s) => s.id !== id));
+}
+
+// Nur abweichende Texte werden gespeichert; ein leerer Wert löscht die
+// Abweichung, sodass wieder der Standardtext aus content.js greift.
+export async function getContentOverrides() {
+  if (usePg) {
+    const { rows } = await pool.query("SELECT key, value FROM content");
+    return Object.fromEntries(rows.map((r) => [r.key, r.value]));
+  }
+  return readJsonObject(CONTENT_FILE);
+}
+
+export async function saveContentOverrides(patch) {
+  if (usePg) {
+    for (const [key, value] of Object.entries(patch)) {
+      if (value) {
+        await pool.query(
+          `INSERT INTO content (key, value) VALUES ($1, $2)
+           ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, updated_at = now()`,
+          [key, value]
+        );
+      } else {
+        await pool.query("DELETE FROM content WHERE key = $1", [key]);
+      }
+    }
+    return getContentOverrides();
+  }
+  const current = await readJsonObject(CONTENT_FILE);
+  for (const [key, value] of Object.entries(patch)) {
+    if (value) current[key] = value;
+    else delete current[key];
+  }
+  await writeJson(CONTENT_FILE, current);
+  return current;
 }
 
 export async function listSubmissions() {
