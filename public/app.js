@@ -52,6 +52,12 @@ const appRole = document.getElementById("app-role");
 const DEFAULT_APPLY_TITLE = applyTitleEl ? applyTitleEl.textContent : "";
 const DEFAULT_APPLY_INTRO = applyIntroEl ? applyIntroEl.textContent : "";
 
+// Texte kommen aus dem Admin-Bereich (site-content.js), solange sie geladen sind.
+function text(key, fallback) {
+  const content = window.kpContent;
+  return (content && content[key]) || fallback;
+}
+
 function clearJobContext() {
   const form = document.getElementById("form-apply");
   if (form) form.reset();
@@ -60,8 +66,8 @@ function clearJobContext() {
   if (applyJobField) applyJobField.hidden = true;
   if (applyRoleField) applyRoleField.hidden = false;
   if (appRole) appRole.setAttribute("required", "");
-  if (applyTitleEl) applyTitleEl.textContent = DEFAULT_APPLY_TITLE;
-  if (applyIntroEl) applyIntroEl.textContent = DEFAULT_APPLY_INTRO;
+  if (applyTitleEl) applyTitleEl.textContent = text("apply.title", DEFAULT_APPLY_TITLE);
+  if (applyIntroEl) applyIntroEl.textContent = text("apply.intro", DEFAULT_APPLY_INTRO);
 }
 
 function openJobApply(job) {
@@ -78,8 +84,12 @@ function openJobApply(job) {
   // Rolle ist durch die Stelle vorgegeben – Auswahlfeld ausblenden.
   if (applyRoleField) applyRoleField.hidden = true;
   if (appRole) appRole.removeAttribute("required");
-  if (applyTitleEl) applyTitleEl.textContent = "Auf diese Stelle bewerben";
-  if (applyIntroEl) applyIntroEl.textContent = "Bewirb dich direkt auf die ausgewählte Stelle. Wir melden uns zeitnah zurück.";
+  if (applyTitleEl) applyTitleEl.textContent = text("applyJob.title", "Auf diese Stelle bewerben");
+  if (applyIntroEl)
+    applyIntroEl.textContent = text(
+      "applyJob.intro",
+      "Bewirb dich direkt auf die ausgewählte Stelle. Wir melden uns zeitnah zurück."
+    );
   openModal("apply");
 }
 
@@ -167,7 +177,7 @@ function jobCard(job) {
     <h3>${esc(job.title)}</h3>
     ${meta.length ? `<p class="job-meta">${meta.map(esc).join(" · ")}</p>` : ""}
     ${job.description ? `<p class="job-desc">${esc(job.description)}</p>` : ""}
-    <button class="btn btn-gold job-apply" type="button">Auf diese Stelle bewerben</button>
+    <button class="btn btn-gold job-apply" type="button">${esc(text("jobs.applyButton", "Auf diese Stelle bewerben"))}</button>
   `;
   card.querySelector(".job-apply").addEventListener("click", () => openJobApply(job));
   return card;
@@ -182,8 +192,11 @@ async function loadJobs() {
     const jobs = (data && data.jobs) || [];
     list.innerHTML = "";
     if (!jobs.length) {
-      list.innerHTML =
-        '<p class="jobs-empty">Aktuell sind keine Stellen ausgeschrieben. Bewirb dich gern allgemein für unseren Kandidatenpool.</p>';
+      const empty = text(
+        "jobs.empty",
+        "Aktuell sind keine Stellen ausgeschrieben. Bewirb dich gern allgemein für unseren Kandidatenpool."
+      );
+      list.innerHTML = `<p class="jobs-empty">${esc(empty)}</p>`;
       return;
     }
     jobs.forEach((job) => list.appendChild(jobCard(job)));
@@ -193,4 +206,6 @@ async function loadJobs() {
   }
 }
 
-loadJobs();
+// Erst rendern, wenn die Texte da sind – sonst blitzen Standardtexte auf.
+if (window.kpContentReady) window.kpContentReady.then(loadJobs, loadJobs);
+else loadJobs();

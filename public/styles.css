@@ -134,7 +134,7 @@ h2 { font-family: 'Anton', sans-serif; font-size: clamp(1.7rem, 4vw, 2.4rem); te
 
 .about p { max-width: 62ch; color: var(--chalk-dim); font-size: 1.05rem; }
 .about p + p { margin-top: 14px; }
-.about strong { color: var(--chalk); }
+.about strong, .about em { color: var(--chalk); font-style: normal; }
 
 .contact { text-align: center; padding: 96px 0; }
 .contact h2 { margin-bottom: 14px; }
@@ -255,6 +255,7 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
   font: inherit; font-size: .85rem; cursor: pointer; padding: 7px 14px; border-radius: 999px;
   border: 1px solid var(--line); background: transparent; color: var(--chalk);
 }
+a.btn-sm { display: inline-block; text-decoration: none; }
 .btn-sm:hover { border-color: var(--gold); color: var(--gold); }
 .btn-sm.danger:hover { border-color: var(--danger); color: var(--danger); }
 .tag { font-family: 'IBM Plex Mono', monospace; font-size: .72rem; padding: 3px 10px; border-radius: 999px; white-space: nowrap; }
@@ -266,6 +267,21 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
 .sub-item dt { color: var(--chalk-dim); font-size: .85rem; }
 .sub-item dd { color: var(--chalk); font-size: .9rem; }
 .admin-hint { color: var(--chalk-dim); font-size: .9rem; margin-top: 10px; }
+.admin-tabs { flex-wrap: wrap; }
+
+/* Texte der Website */
+.cms-group { margin-bottom: 18px; }
+.cms-group h3 {
+  font-family: 'Anton', sans-serif; text-transform: uppercase;
+  font-size: 1.05rem; color: var(--gold); margin-bottom: 14px;
+}
+.cms-group .field { margin-bottom: 16px; }
+.cms-hint { margin-top: 4px; font-size: .82rem; }
+.link-btn {
+  font: inherit; font-size: .82rem; cursor: pointer; padding: 0;
+  background: none; border: 0; color: var(--chalk-dim); text-decoration: underline;
+}
+.link-btn:hover { color: var(--gold); }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }

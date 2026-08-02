@@ -1,4 +1,5 @@
-// Admin-Oberfläche für Kaderplus: Login + Stellenverwaltung + Eingänge.
+// Admin-Oberfläche für Kaderplus: Login, Stellenverwaltung, Eingänge und
+// die redaktionell pflegbaren Texte der Website.
 
 const AREAS = [
   "Sportliche Leitung & Kaderplanung",
@@ -110,7 +111,9 @@ document.querySelectorAll(".admin-tab").forEach((tab) => {
     const target = tab.dataset.tab;
     $("tab-jobs").hidden = target !== "jobs";
     $("tab-subs").hidden = target !== "subs";
+    $("tab-content").hidden = target !== "content";
     if (target === "subs") loadSubmissions();
+    if (target === "content") loadContent();
   });
 });
 
@@ -272,6 +275,16 @@ async function loadSubmissions() {
   }
 }
 
+async function deleteSubmission(s, el) {
+  if (!confirm("Diesen Eingang wirklich löschen?")) return;
+  const res = await fetch(`/api/admin/submissions/${encodeURIComponent(s.id)}`, { method: "DELETE" });
+  if (res.status === 401) return showLogin();
+  el.remove();
+  if (!$("subs-list").children.length) {
+    $("subs-list").innerHTML = '<p class="admin-hint">Noch keine Eingänge.</p>';
+  }
+}
+
 function subCard(s) {
   const el = document.createElement("div");
   el.className = "sub-item";
@@ -297,8 +310,105 @@ function subCard(s) {
     <dl>
       ${rows.filter(([, v]) => v).map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("")}
     </dl>
+    <div class="job-admin-actions">
+      <button class="btn-sm danger" data-act="delete">Löschen</button>
+    </div>
   `;
+  el.querySelector('[data-act="delete"]').addEventListener("click", () => deleteSubmission(s, el));
   return el;
 }
+
+// ---------- Texte der Website ----------
+let contentFields = [];
+
+function fieldId(key) {
+  return `cms-${key.replace(/\./g, "-")}`;
+}
+
+function contentField(field, value) {
+  const id = fieldId(field.key);
+  const wrap = document.createElement("div");
+  wrap.className = "field";
+  const isLong = field.type === "textarea";
+  wrap.innerHTML = `
+    <label for="${id}">${esc(field.label)}</label>
+    ${isLong
+      ? `<textarea id="${id}" rows="3"></textarea>`
+      : `<input id="${id}" type="text">`}
+    <p class="admin-hint cms-hint">
+      ${field.hint ? `${esc(field.hint)} ` : ""}<button class="link-btn" type="button" data-act="reset">Standardtext einsetzen</button>
+    </p>
+  `;
+  const input = wrap.querySelector(isLong ? "textarea" : "input");
+  input.value = value;
+  wrap.querySelector('[data-act="reset"]').addEventListener("click", () => {
+    input.value = field.default;
+    input.focus();
+  });
+  return wrap;
+}
+
+async function loadContent() {
+  const box = $("content-groups");
+  box.innerHTML = '<p class="admin-hint">Wird geladen …</p>';
+  try {
+    const res = await fetch("/api/admin/content");
+    if (res.status === 401) return showLogin();
+    const data = await res.json();
+    const groups = data.groups || [];
+    const content = data.content || {};
+    contentFields = groups.flatMap((g) => g.fields);
+    box.innerHTML = "";
+    groups.forEach((group) => {
+      const card = document.createElement("div");
+      card.className = "admin-card cms-group";
+      card.innerHTML = `
+        <h3>${esc(group.label)}</h3>
+        ${group.note ? `<p class="admin-hint">${esc(group.note)}</p>` : ""}
+      `;
+      group.fields.forEach((field) => card.appendChild(contentField(field, content[field.key] ?? "")));
+      box.appendChild(card);
+    });
+  } catch {
+    box.innerHTML = '<p class="admin-hint">Konnte Texte nicht laden.</p>';
+  }
+}
+
+async function saveContent() {
+  const status = $("content-status");
+  status.textContent = "Wird gespeichert …";
+  status.className = "form-status";
+  const payload = {};
+  contentFields.forEach((field) => {
+    const el = $(fieldId(field.key));
+    if (el) payload[field.key] = el.value;
+  });
+  try {
+    const res = await fetch("/api/admin/content", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ content: payload }),
+    });
+    if (res.status === 401) return showLogin();
+    const data = await res.json().catch(() => ({}));
+    if (res.ok && data.ok) {
+      contentFields.forEach((field) => {
+        const el = $(fieldId(field.key));
+        if (el) el.value = data.content[field.key] ?? "";
+      });
+      status.textContent = "Gespeichert – die Website zeigt die neuen Texte.";
+      status.classList.add("success");
+    } else {
+      status.textContent = data.error || "Speichern fehlgeschlagen.";
+      status.classList.add("error");
+    }
+  } catch {
+    status.textContent = "Verbindung fehlgeschlagen.";
+    status.classList.add("error");
+  }
+}
+
+$("content-save").addEventListener("click", saveContent);
+$("content-save-bottom").addEventListener("click", saveContent);
 
 checkSession();
